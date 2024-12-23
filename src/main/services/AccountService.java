@@ -8,16 +8,33 @@ package main.services;
  *
  * @author admin
  */
-import main.dao.AccountDAO;
 import java.sql.SQLException;
+import main.dao.AccountDAO;
+import main.dao.TransactionDAO;
 import main.models.Account;
 
 public class AccountService {
     public AccountDAO accountDAO = new AccountDAO();
-
+    public TransactionDAO transactionDAO = new TransactionDAO();
+    
     public Account createAccount(String accountType, double initialBalance) throws SQLException {
         Account account = new Account(0, accountType, initialBalance);
         return accountDAO.createAccount(account);
+    }
+    
+    public void deleteAccountByAccountId(long accountId) throws SQLException {
+        
+       Account account = getAccountDetails(accountId);
+
+       if(account == null) 
+       throw new SQLException("Account not Found");
+       
+        
+       else {
+           accountDAO.deleteAccountByAccountId(accountId);
+           transactionDAO.deleteAccountTransactionByAccountId(accountId);
+       }
+        
     }
 
     public Account getAccountDetails(long accountId) throws SQLException {

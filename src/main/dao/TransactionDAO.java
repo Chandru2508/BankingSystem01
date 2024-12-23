@@ -35,6 +35,17 @@ public class TransactionDAO {
         }
         return transaction;
     }
+    
+    public void deleteAccountTransactionByAccountId(long accountId) throws SQLException {
+        String sql = "delete from transactions where account_id  = ?";
+        
+        try(Connection con = DatabaseConnection.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setLong(1, accountId);
+            stmt.execute();
+        }
+        System.out.println("Account Transactions Deleted Successfuly...");
+    }
 
     public List<Transaction> getTransactionsByAccountId(long accountId) throws SQLException {
         

@@ -30,6 +30,17 @@ public class AccountDAO {
         }
         return account;
     }
+    
+    public void deleteAccountByAccountId(long accountId) throws SQLException {
+        String sql = "delete from accounts where account_id  = ?";
+        
+        try(Connection con = DatabaseConnection.getConnection();
+                PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setLong(1, accountId);
+            stmt.execute();
+        }
+        System.out.println("Account Deleted Successfuly...");
+    }
 
     public Account getAccountById(long accountId) throws SQLException {
         String sql = "SELECT * FROM accounts WHERE account_id = ?";

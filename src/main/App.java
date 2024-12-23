@@ -29,6 +29,7 @@ public class App {
             System.out.println("4. Withdraw Money");
             System.out.println("5. View Transactions");
             System.out.println("6. Exit");
+            System.out.println("7. Admin");
             System.out.print("Select an option: ");
 
             int choice = scanner.nextInt();
@@ -73,6 +74,29 @@ public class App {
                     }
                     case 6 -> {
                         System.out.println("Exiting... Goodbye!");
+                        scanner.close();
+                        return;
+                    }
+                    case 7 -> {
+                        System.out.println("User Name: ");
+                        String userName = scanner.next();
+                        if(userName.equals("Chandru2728")) {
+                            System.out.println("Pasword: ");
+                            String passKey = scanner.next();
+                            if(passKey.equals("Chandru2728@2024")) {
+                                System.out.println("Enter the Option. \n 1.Delete");
+                                int option = scanner.nextInt();
+                                if(option == 1){
+                                    System.out.println("Enter the Account ID");
+                                    long id = scanner.nextLong();
+                                    accountService.deleteAccountByAccountId(id);
+                                }
+                                else {System.out.println("Invalid Option");}
+                            }
+                            else {System.out.println("Invalid Password");}
+                        }
+                        else {System.out.println("Invalid User Name");}
+                        
                         scanner.close();
                         return;
                     }
