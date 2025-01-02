@@ -20,6 +20,7 @@ public class App {
         AccountService accountService = new AccountService();
         TransactionService transactionService = new TransactionService();
         Scanner scanner = new Scanner(System.in);
+        
 
         while (true) {
             System.out.println("\n--- Banking System ---");
@@ -91,6 +92,7 @@ public class App {
                                     long id = scanner.nextLong();
                                     accountService.deleteAccountByAccountId(id);
                                 }
+                                
                                 else {System.out.println("Invalid Option");}
                             }
                             else {System.out.println("Invalid Password");}
