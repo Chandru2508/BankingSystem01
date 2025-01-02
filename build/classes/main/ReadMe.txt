@@ -206,6 +206,171 @@ When the application is running, you can perform the following operations:
 
 ---
 
+# Banking Application Using Swing
+
+This application is a simple banking system implemented using Java Swing. It provides a graphical user interface (GUI) for performing basic banking operations like creating accounts, viewing accounts, depositing money, withdrawing money, viewing transactions, and an admin interface for managing accounts.
+
+## Features
+
+1. **Create Account**
+   - Allows users to create a new bank account by entering the account type and initial balance.
+
+2. **View Account**
+   - Displays the details of a specific account by entering its account ID.
+
+3. **Deposit Money**
+   - Enables users to deposit money into an account after verifying the account ID.
+
+4. **Withdraw Money**
+   - Enables users to withdraw money from an account after verifying the account ID.
+
+5. **View Transactions**
+   - Displays all transactions for a specific account ID on a new page.
+
+6. **Admin Interface**
+   - Allows admin users to log in and manage accounts, including the ability to delete accounts.
+
+7. **Exit**
+   - Closes the application.
+
+## How It Works
+
+### Main Components
+- **`JFrame`**: The main application window.
+- **`JPanel`**: Each section (e.g., Deposit, View Account) is displayed using a new panel.
+- **Switching Panels**: The `switchPanel` method dynamically changes the visible content of the `JFrame`.
+
+### Switching Between Panels
+The `switchPanel` method replaces the current content of the frame with a new panel, ensuring a seamless transition between different parts of the application.
+```java
+private void switchPanel(JPanel panel) {
+    frame.getContentPane().removeAll();
+    frame.getContentPane().add(panel);
+    frame.revalidate();
+    frame.repaint();
+}
+```
+
+### Deposit/Withdraw Flow
+- The account ID is verified first.
+- After verification, the amount field and action buttons (Deposit/Withdraw) are enabled.
+
+### Viewing Transactions
+- Opens a new panel with a list of all transactions for the entered account ID.
+
+## Code Structure
+
+### Main Classes
+
+1. **`BankingAppSwing`**
+   - Contains the GUI logic for the application.
+   - Handles user interactions and calls appropriate methods from the service layer.
+
+2. **`AccountService`**
+   - Manages account-related operations, such as creating and fetching account details.
+
+3. **`TransactionService`**
+   - Handles transaction-related operations, such as recording deposits and withdrawals.
+
+### Key Methods
+
+#### `initialize()`
+Sets up the main menu with buttons for all features:
+```java
+private void initialize() {
+    frame = new JFrame("Banking System");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(500, 400);
+
+    JPanel mainPanel = new JPanel(new GridLayout(7, 1));
+
+    JButton createAccountButton = new JButton("Create Account");
+    JButton viewAccountButton = new JButton("View Account");
+    JButton depositButton = new JButton("Deposit Money");
+    JButton withdrawButton = new JButton("Withdraw Money");
+    JButton viewTransactionsButton = new JButton("View Transactions");
+    JButton adminButton = new JButton("Admin");
+    JButton exitButton = new JButton("Exit");
+
+    createAccountButton.addActionListener(e -> openCreateAccountPanel());
+    viewAccountButton.addActionListener(e -> openViewAccountPanel());
+    depositButton.addActionListener(e -> openDepositPanel());
+    withdrawButton.addActionListener(e -> openWithdrawPanel());
+    viewTransactionsButton.addActionListener(e -> openViewTransactionsPanel());
+    adminButton.addActionListener(e -> openAdminPanel());
+    exitButton.addActionListener(e -> System.exit(0));
+
+    mainPanel.add(createAccountButton);
+    mainPanel.add(viewAccountButton);
+    mainPanel.add(depositButton);
+    mainPanel.add(withdrawButton);
+    mainPanel.add(viewTransactionsButton);
+    mainPanel.add(adminButton);
+    mainPanel.add(exitButton);
+
+    frame.add(mainPanel);
+    frame.setVisible(true);
+}
+```
+
+#### `openDepositPanel()`
+Handles the deposit process:
+- Verifies the account ID.
+- Enables the amount field and deposit button after successful verification.
+- Calls the `TransactionService` to record the deposit.
+
+#### `openViewTransactionsPanel()`
+Displays transactions on a new page.
+```java
+private void openViewTransactionsPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    JTextField accountIdField = new JTextField();
+    JButton viewButton = new JButton("View Transactions");
+
+    panel.add(new JLabel("Enter Account ID:"), BorderLayout.NORTH);
+    panel.add(accountIdField, BorderLayout.CENTER);
+    panel.add(viewButton, BorderLayout.SOUTH);
+
+    viewButton.addActionListener(e -> {
+        long accountId = Long.parseLong(accountIdField.getText());
+        try {
+            var transactions = transactionService.getTransactionsByAccountId(accountId);
+            JPanel transactionPanel = new JPanel(new GridLayout(transactions.size(), 1));
+            transactions.forEach(t -> transactionPanel.add(new JLabel(t.toString())));
+
+            switchPanel(transactionPanel);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
+
+    switchPanel(panel);
+}
+```
+
+## Setup Instructions
+
+1. **Prerequisites**
+   - Java Development Kit (JDK) installed.
+   - A database connection configured for the `AccountService` and `TransactionService` classes.
+
+2. **Run the Application**
+   - Compile and run the `BankingAppSwing` class.
+
+3. **Usage**
+   - Use the buttons to navigate between features.
+   - Follow the prompts in each panel for input.
+
+## Future Enhancements
+- Add validation for user inputs.
+- Implement pagination for transaction views.
+- Enhance the admin interface with more features.
+- Add themes and styles to improve UI aesthetics.
+
+## Dependencies
+- Java Swing (built-in).
+- JDBC for database connectivity.
+
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
@@ -213,6 +378,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ---
 
 ## Author
+This application was created as a learning exercise for implementing GUIs in Java. Please feel free to suggest improvements or report issues.
 
 [Hemachandran S]
 
