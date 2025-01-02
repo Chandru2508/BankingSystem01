@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import main.models.Account;
 import main.services.AccountService;
 import main.services.TransactionService;
@@ -20,40 +21,37 @@ public class BankingAppSwing {
     }
 
     private void initialize() {
-        // Create main frame
         frame = new JFrame("Banking System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(500, 400);
 
-        // Main panel
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(7, 1));
+        JPanel mainPanel = new JPanel(new GridLayout(7, 1));
 
-        JButton createAccountBtn = new JButton("Create Account");
-        JButton viewAccountBtn = new JButton("View Account");
-        JButton depositBtn = new JButton("Deposit Money");
-        JButton withdrawBtn = new JButton("Withdraw Money");
-        JButton viewTransactionsBtn = new JButton("View Transactions");
-        JButton adminBtn = new JButton("Admin");
-        JButton exitBtn = new JButton("Exit");
+        JButton createAccountButton = new JButton("Create Account");
+        JButton viewAccountButton = new JButton("View Account");
+        JButton depositButton = new JButton("Deposit Money");
+        JButton withdrawButton = new JButton("Withdraw Money");
+        JButton viewTransactionsButton = new JButton("View Transactions");
+        JButton adminButton = new JButton("Admin");
+        JButton exitButton = new JButton("Exit");
 
-        createAccountBtn.addActionListener(e -> openCreateAccountPanel());
-        viewAccountBtn.addActionListener(e -> openViewAccountPanel());
-        depositBtn.addActionListener(e -> openDepositPanel());
-        withdrawBtn.addActionListener(e -> openWithdrawPanel());
-        viewTransactionsBtn.addActionListener(e -> openViewTransactionsPanel());
-        adminBtn.addActionListener(e -> openAdminPanel());
-        exitBtn.addActionListener(e -> System.exit(0));
+        createAccountButton.addActionListener(e -> openCreateAccountPanel());
+        viewAccountButton.addActionListener(e -> openViewAccountPanel());
+        depositButton.addActionListener(e -> openDepositPanel());
+        withdrawButton.addActionListener(e -> openWithdrawPanel());
+        viewTransactionsButton.addActionListener(e -> openViewTransactionsPanel());
+        adminButton.addActionListener(e -> openAdminPanel());
+        exitButton.addActionListener(e -> System.exit(0));
 
-        mainPanel.add(createAccountBtn);
-        mainPanel.add(viewAccountBtn);
-        mainPanel.add(depositBtn);
-        mainPanel.add(withdrawBtn);
-        mainPanel.add(viewTransactionsBtn);
-        mainPanel.add(adminBtn);
-        mainPanel.add(exitBtn);
+        mainPanel.add(createAccountButton);
+        mainPanel.add(viewAccountButton);
+        mainPanel.add(depositButton);
+        mainPanel.add(withdrawButton);
+        mainPanel.add(viewTransactionsButton);
+        mainPanel.add(adminButton);
+        mainPanel.add(exitButton);
 
-        frame.getContentPane().add(mainPanel);
+        frame.add(mainPanel);
         frame.setVisible(true);
     }
 
@@ -61,22 +59,22 @@ public class BankingAppSwing {
         JPanel panel = new JPanel(new GridLayout(3, 2));
         JTextField typeField = new JTextField();
         JTextField balanceField = new JTextField();
-        JButton createBtn = new JButton("Create");
+        JButton createButton = new JButton("Create");
 
         panel.add(new JLabel("Account Type:"));
         panel.add(typeField);
         panel.add(new JLabel("Initial Balance:"));
         panel.add(balanceField);
         panel.add(new JLabel());
-        panel.add(createBtn);
+        panel.add(createButton);
 
-        createBtn.addActionListener(e -> {
+        createButton.addActionListener(e -> {
             String type = typeField.getText();
             double balance = Double.parseDouble(balanceField.getText());
             try {
                 Account account = accountService.createAccount(type, balance);
                 JOptionPane.showMessageDialog(frame, "Account created successfully: " + account);
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -85,117 +83,186 @@ public class BankingAppSwing {
     }
 
     private void openViewAccountPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new GridLayout(2, 1));
         JTextField accountIdField = new JTextField();
-        JButton viewBtn = new JButton("View");
+        JButton viewButton = new JButton("View");
 
-        panel.add(new JLabel("Enter Account ID:"), BorderLayout.NORTH);
-        panel.add(accountIdField, BorderLayout.CENTER);
-        panel.add(viewBtn, BorderLayout.SOUTH);
+        panel.add(new JLabel("Enter Account ID:"));
+        panel.add(accountIdField);
+        panel.add(viewButton);
 
-        viewBtn.addActionListener(e -> {
+        viewButton.addActionListener(e -> {
             long accountId = Long.parseLong(accountIdField.getText());
             try {
                 Account account = accountService.getAccountDetails(accountId);
                 JOptionPane.showMessageDialog(frame, "Account Details: " + account);
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         switchPanel(panel);
     }
+private void openDepositPanel() {
+    JPanel panel = new JPanel(new GridLayout(4, 2));
+    JTextField accountIdField = new JTextField();
+    JTextField amountField = new JTextField();
+    amountField.setEnabled(false);
+    JButton verifyButton = new JButton("Verify Account");
+    JButton depositButton = new JButton("Deposit");
+    depositButton.setEnabled(false);
 
-    private void openDepositPanel() {
-        JPanel panel = new JPanel(new GridLayout(3, 2));
-        JTextField accountIdField = new JTextField();
-        JTextField amountField = new JTextField();
-        JButton depositBtn = new JButton("Deposit");
+    panel.add(new JLabel("Account ID:"));
+    panel.add(accountIdField);
+    panel.add(verifyButton);
+    panel.add(new JLabel());
+    panel.add(new JLabel("Amount:"));
+    panel.add(amountField);
+    panel.add(depositButton);
 
-        panel.add(new JLabel("Account ID:"));
-        panel.add(accountIdField);
-        panel.add(new JLabel("Amount:"));
-        panel.add(amountField);
-        panel.add(new JLabel());
-        panel.add(depositBtn);
-
-        depositBtn.addActionListener(e -> {
-            long accountId = Long.parseLong(accountIdField.getText());
-            double amount = Double.parseDouble(amountField.getText());
-            try {
-                transactionService.recordTransaction(accountId, amount, "Credit");
-                JOptionPane.showMessageDialog(frame, "Deposit successful");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    verifyButton.addActionListener(e -> {
+        long accountId = Long.parseLong(accountIdField.getText());
+        try {
+            Account account = accountService.getAccountDetails(accountId);
+            if (account != null) {
+                JOptionPane.showMessageDialog(frame, "Account verified: " + account);
+                amountField.setEnabled(true);
+                depositButton.setEnabled(true);
             }
-        });
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
 
-        switchPanel(panel);
-    }
+    depositButton.addActionListener(e -> {
+        long accountId = Long.parseLong(accountIdField.getText());
+        double amount = Double.parseDouble(amountField.getText());
+        try {
+            transactionService.recordTransaction(accountId, amount, "Credit");
+            JOptionPane.showMessageDialog(frame, "Deposit successful");
+            initialize(); // Return to the main menu
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
 
-    private void openWithdrawPanel() {
-        JPanel panel = new JPanel(new GridLayout(3, 2));
-        JTextField accountIdField = new JTextField();
-        JTextField amountField = new JTextField();
-        JButton withdrawBtn = new JButton("Withdraw");
+    switchPanel(panel);
+}
 
-        panel.add(new JLabel("Account ID:"));
-        panel.add(accountIdField);
-        panel.add(new JLabel("Amount:"));
-        panel.add(amountField);
-        panel.add(new JLabel());
-        panel.add(withdrawBtn);
+private void openWithdrawPanel() {
+    JPanel panel = new JPanel(new GridLayout(4, 2));
+    JTextField accountIdField = new JTextField();
+    JTextField amountField = new JTextField();
+    amountField.setEnabled(false);
+    JButton verifyButton = new JButton("Verify Account");
+    JButton withdrawButton = new JButton("Withdraw");
+    withdrawButton.setEnabled(false);
 
-        withdrawBtn.addActionListener(e -> {
-            long accountId = Long.parseLong(accountIdField.getText());
-            double amount = Double.parseDouble(amountField.getText());
-            try {
-                transactionService.recordTransaction(accountId, amount, "Debit");
-                JOptionPane.showMessageDialog(frame, "Withdrawal successful");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    panel.add(new JLabel("Account ID:"));
+    panel.add(accountIdField);
+    panel.add(verifyButton);
+    panel.add(new JLabel());
+    panel.add(new JLabel("Amount:"));
+    panel.add(amountField);
+    panel.add(withdrawButton);
+
+    verifyButton.addActionListener(e -> {
+        long accountId = Long.parseLong(accountIdField.getText());
+        try {
+            Account account = accountService.getAccountDetails(accountId);
+            if (account != null) {
+                JOptionPane.showMessageDialog(frame, "Account verified: " + account);
+                amountField.setEnabled(true);
+                withdrawButton.setEnabled(true);
             }
-        });
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
 
-        switchPanel(panel);
-    }
+    withdrawButton.addActionListener(e -> {
+        long accountId = Long.parseLong(accountIdField.getText());
+        double amount = Double.parseDouble(amountField.getText());
+        try {
+            transactionService.recordTransaction(accountId, amount, "Debit");
+            JOptionPane.showMessageDialog(frame, "Withdrawal successful");
+            initialize(); // Return to the main menu
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
 
-    private void openViewTransactionsPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        JTextField accountIdField = new JTextField();
-        JButton viewBtn = new JButton("View Transactions");
+    switchPanel(panel);
+}
 
-        panel.add(new JLabel("Enter Account ID:"), BorderLayout.NORTH);
-        panel.add(accountIdField, BorderLayout.CENTER);
-        panel.add(viewBtn, BorderLayout.SOUTH);
 
-        viewBtn.addActionListener(e -> {
-            long accountId = Long.parseLong(accountIdField.getText());
-            try {
-                var transactions = transactionService.getTransactionsByAccountId(accountId);
-                JOptionPane.showMessageDialog(frame, transactions.toString());
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+   private void openViewTransactionsPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    JPanel inputPanel = new JPanel(new GridLayout(2, 1));
+    JTextField accountIdField = new JTextField();
+    JButton viewButton = new JButton("View Transactions");
+
+    inputPanel.add(new JLabel("Enter Account ID:"));
+    inputPanel.add(accountIdField);
+
+    panel.add(inputPanel, BorderLayout.NORTH);
+    panel.add(viewButton, BorderLayout.SOUTH);
+
+    viewButton.addActionListener(e -> {
+        long accountId = Long.parseLong(accountIdField.getText());
+        try {
+            var transactions = transactionService.getTransactionsByAccountId(accountId);
+            if (transactions.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "No transactions found for this account.");
+            } else {
+                // Create a new panel to display the transactions
+                JPanel transactionsPanel = new JPanel(new BorderLayout());
+                String[] columnNames = {"Transaction ID", "Account ID", "Amount", "Type", "Date"};
+                Object[][] data = new Object[transactions.size()][5];
+                for (int i = 0; i < transactions.size(); i++) {
+                    var transaction = transactions.get(i);
+                    data[i][0] = transaction.getTransactionId();
+                    data[i][1] = transaction.getAccountId();
+                    data[i][2] = transaction.getAmount();
+                    data[i][3] = transaction.getType();
+                    data[i][4] = transaction.getDate();
+                }
+
+                JTable table = new JTable(data, columnNames);
+                JScrollPane scrollPane = new JScrollPane(table);
+
+                JButton backButton = new JButton("Back to Main Menu");
+                backButton.addActionListener(event -> initialize());
+
+                transactionsPanel.add(new JLabel("Transaction Details", SwingConstants.CENTER), BorderLayout.NORTH);
+                transactionsPanel.add(scrollPane, BorderLayout.CENTER);
+                transactionsPanel.add(backButton, BorderLayout.SOUTH);
+
+                switchPanel(transactionsPanel);
             }
-        });
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
 
-        switchPanel(panel);
-    }
+    switchPanel(panel);
+}
+
 
     private void openAdminPanel() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
-        JButton loginBtn = new JButton("Login");
+        JButton loginButton = new JButton("Login");
 
         panel.add(new JLabel("Username:"));
         panel.add(usernameField);
         panel.add(new JLabel("Password:"));
         panel.add(passwordField);
         panel.add(new JLabel());
-        panel.add(loginBtn);
+        panel.add(loginButton);
 
-        loginBtn.addActionListener(e -> {
+        loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             if (username.equals("Chandru2728") && password.equals("Chandru2728@2024")) {
@@ -210,20 +277,20 @@ public class BankingAppSwing {
 
     private void openAdminOptionsPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 1));
-        JButton deleteAccountBtn = new JButton("Delete Account");
+        JButton deleteAccountButton = new JButton("Delete Account");
 
-        deleteAccountBtn.addActionListener(e -> {
+        deleteAccountButton.addActionListener(e -> {
             String accountIdStr = JOptionPane.showInputDialog(frame, "Enter Account ID to delete:");
             long accountId = Long.parseLong(accountIdStr);
             try {
                 accountService.deleteAccountByAccountId(accountId);
                 JOptionPane.showMessageDialog(frame, "Account deleted successfully");
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        panel.add(deleteAccountBtn);
+        panel.add(deleteAccountButton);
 
         switchPanel(panel);
     }
