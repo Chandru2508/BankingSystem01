@@ -24,7 +24,7 @@ public class BankingAppSwing {
         frame = new JFrame("Banking System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(300, 90, 900, 600);
-        frame.setResizable(false);
+        frame.setResizable(true);
 
         c = frame.getContentPane();
         c.setLayout(null);
@@ -125,7 +125,11 @@ private void openCreateAccountPanel() {
             long accountId = Long.parseLong(idField.getText());
             try {
                 Account account = accountService.getAccountDetails(accountId);
-                JOptionPane.showMessageDialog(frame, "Account Details: " + account);
+                
+                if(account == null) {JOptionPane.showMessageDialog(frame, "Account Not Found! ");}
+                
+                else {JOptionPane.showMessageDialog(frame, "Account Details: " + account);}
+                
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

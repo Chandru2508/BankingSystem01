@@ -228,7 +228,9 @@ This application is a simple banking system implemented using Java Swing. It pro
    - Displays all transactions for a specific account ID on a new page.
 
 6. **Admin Interface**
-   - Allows admin users to log in and manage accounts, including the ability to delete accounts.
+   - Admin Login: Admin users can log in using a predefined username and password.
+   - View All Accounts: Admin can view all user accounts with account details.
+   - Delete Account: Admin can delete a user account by entering the account ID.
 
 7. **Exit**
    - Closes the application.
@@ -360,6 +362,7 @@ private void openViewTransactionsPanel() {
 3. **Usage**
    - Use the buttons to navigate between features.
    - Follow the prompts in each panel for input.
+
 
 ## Future Enhancements
 - Add validation for user inputs.
