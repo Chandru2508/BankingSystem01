@@ -63,41 +63,52 @@ public class BankingAppSwing {
         return button;
     }
 
-    private void openCreateAccountPanel() {
-        JPanel panel = createFormPanel("Create Account");
+private void openCreateAccountPanel() {
+    JPanel panel = createFormPanel("Create Account");
 
-        JLabel typeLabel = createLabel("Account Type:", 100);
-        JTextField typeField = createTextField(300, 100);
-        panel.add(typeLabel);
-        panel.add(typeField);
+    JLabel typeLabel = createLabel("Account Type:", 100);
+    String[] accountTypes = { "Savings", "Current" };
+    JComboBox<String> typeComboBox = new JComboBox<>(accountTypes);
+    typeComboBox.setFont(new Font("Arial", Font.PLAIN, 15));
+    typeComboBox.setSize(200, 30);
+    typeComboBox.setLocation(300, 100);
+    panel.add(typeLabel);
+    panel.add(typeComboBox);
 
-        JLabel balanceLabel = createLabel("Initial Balance:", 150);
-        JTextField balanceField = createTextField(300, 150);
-        panel.add(balanceLabel);
-        panel.add(balanceField);
+    JLabel balanceLabel = createLabel("Initial Balance:", 150);
+    JTextField balanceField = createTextField(300, 150);
+    panel.add(balanceLabel);
+    panel.add(balanceField);
 
-        JButton createButton = createActionButton("Create", 200);
-        JButton backButton = createActionButton("Back to Main Menu", 250);
+    JButton createButton = createActionButton("Create", 200);
+    JButton backButton = createActionButton("Back to Main Menu", 250);
 
-        createButton.addActionListener(e -> {
-            String type = typeField.getText();
-            double balance = Double.parseDouble(balanceField.getText());
-            try {
-                Account account = accountService.createAccount(type, balance);
-                JOptionPane.showMessageDialog(frame, "Account created successfully: " + account);
-                initialize();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+    createButton.addActionListener(e -> {
+        String type = (String) typeComboBox.getSelectedItem();
+        double balance;
+        try {
+            balance = Double.parseDouble(balanceField.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid number for the initial balance.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            Account account = accountService.createAccount(type, balance);
+            JOptionPane.showMessageDialog(frame, "Account created successfully: " + account);
+            initialize();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
 
-        backButton.addActionListener(e -> initialize());
+    backButton.addActionListener(e -> initialize());
 
-        panel.add(createButton);
-        panel.add(backButton);
+    panel.add(createButton);
+    panel.add(backButton);
 
-        switchPanel(panel);
-    }
+    switchPanel(panel);
+}
+
 
     private void openViewAccountPanel() {
         JPanel panel = createFormPanel("View Account");
