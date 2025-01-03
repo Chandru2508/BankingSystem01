@@ -9,6 +9,7 @@ package main.services;
  * @author admin
  */
 import java.sql.SQLException;
+import java.util.List;
 import main.dao.AccountDAO;
 import main.dao.TransactionDAO;
 import main.models.Account;
@@ -39,6 +40,10 @@ public class AccountService {
 
     public Account getAccountDetails(long accountId) throws SQLException {
         return accountDAO.getAccountById(accountId);
+    }
+
+    public List<Account> getAllAccounts() throws SQLException {
+        return accountDAO.getAllAccounts();
     }
 
     public void updateAccountBalance(long accountId, double balance) throws SQLException {

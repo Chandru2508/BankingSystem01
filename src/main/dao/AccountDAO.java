@@ -9,6 +9,8 @@ package main.dao;
  * @author admin
  */
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 import main.models.Account;
 import main.utils.DatabaseConnection;
 
@@ -60,6 +62,27 @@ public class AccountDAO {
         }
         return null;
     }
+
+    public List<Account> getAllAccounts() throws SQLException {
+    String sql = "SELECT * FROM accounts";
+    List<Account> accounts = new ArrayList<>();
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Account account = new Account(
+                rs.getLong("account_id"),
+                rs.getString("account_type"),
+                rs.getDouble("balance")
+            );
+            accounts.add(account);
+        }
+    }
+    return accounts;
+}
+
 
     public boolean updateAccountBalance(long accountId, double balance) throws SQLException {
         String sql = "UPDATE accounts SET balance = ? WHERE account_id = ?";
