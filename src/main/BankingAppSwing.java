@@ -1,9 +1,9 @@
 package main;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import javax.swing.*;
 import main.models.Account;
 import main.services.AccountService;
 import main.services.TransactionService;
@@ -24,7 +24,7 @@ public class BankingAppSwing {
         frame = new JFrame("Banking System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(300, 90, 900, 600);
-        frame.setResizable(true);
+        frame.setResizable(false);
 
         c = frame.getContentPane();
         c.setLayout(null);
@@ -291,11 +291,12 @@ private void openViewTransactionsPanel() {
                 String[] columnNames = { "Transaction ID", "Account ID", "Amount", "Type", "Date" };
                 Object[][] data = transactions.stream()
                     .map(t -> new Object[] { t.getTransactionId(), t.getAccountId(), t.getAmount(), t.getType(), t.getDate() })
-                    .toArray(Object[][]::new);
+                    .toArray(size -> new Object[size][]);
 
                 JTable table = new JTable(data, columnNames);
                 JScrollPane scrollPane = new JScrollPane(table);
                 scrollPane.setBounds(50, 250, 800, 300);
+                
 
                 panel.add(scrollPane);
                 panel.revalidate();
@@ -439,6 +440,15 @@ private void openViewTransactionsPanel() {
         button.setLocation(300, yPos);
         return button;
     }
+    
+//    private JButton createActionButton(String text, int containerWidth, int yPos) {
+//        JButton button = new JButton(text);
+//        button.setFont(new Font("Arial", Font.PLAIN, 15));
+//        button.setSize(200, 30);
+//        int xPos = (containerWidth - button.getWidth()) / 2;
+//        button.setLocation(xPos, yPos);
+//        return button;
+//    }
 
     private void switchPanel(JPanel panel) {
         frame.getContentPane().removeAll();
@@ -451,3 +461,4 @@ private void openViewTransactionsPanel() {
         SwingUtilities.invokeLater(BankingAppSwing::new);
     }
 }
+

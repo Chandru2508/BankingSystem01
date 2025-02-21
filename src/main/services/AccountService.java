@@ -21,6 +21,7 @@ public class AccountService {
     public Account createAccount(String accountType, double initialBalance) throws SQLException {
         Account account = new Account(0, accountType, initialBalance);
         return accountDAO.createAccount(account);
+        
     }
     
     public void deleteAccountByAccountId(long accountId) throws SQLException {
@@ -32,8 +33,8 @@ public class AccountService {
        
         
        else {
-           accountDAO.deleteAccountByAccountId(accountId);
            transactionDAO.deleteAccountTransactionByAccountId(accountId);
+           accountDAO.deleteAccountByAccountId(accountId);
        }
         
     }

@@ -81,10 +81,10 @@ public class App {
                     case 7 -> {
                         System.out.println("User Name: ");
                         String userName = scanner.next();
-                        if(userName.equals("Chandru2728")) {
+                        if(userName.equals("admin")) {
                             System.out.println("Pasword: ");
                             String passKey = scanner.next();
-                            if(passKey.equals("Chandru2728@2024")) {
+                            if(passKey.equals("admin12")) {
                                 System.out.println("Enter the Option. \n 1.Delete");
                                 int option = scanner.nextInt();
                                 if(option == 1){
